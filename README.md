@@ -48,7 +48,7 @@ O Agile Kanban é uma aplicação de gerenciamento de tarefas projetada para pro
     ./mvnw spring-boot:run
     ```
 
-4. Acesse a aplicação em [http://localhost:8080](http://localhost:8080)
+4. Acesse a aplicação em http://localhost:8080/swagger-ui/index.html
 
 ## Contribuindo
 
