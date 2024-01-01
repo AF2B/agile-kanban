@@ -1,4 +1,4 @@
-package br.com.teamdevs.agilekanban;
+package br.com.teamdevs;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
