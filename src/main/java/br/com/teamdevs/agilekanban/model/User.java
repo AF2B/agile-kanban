@@ -16,7 +16,7 @@ import lombok.Data;
 @Document(collection = "allData")
 public class User {
     @Id
-    private String id;
+    private Long id;
 
     @Field(name = "username")
     private String username;
