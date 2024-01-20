@@ -1,6 +1,6 @@
 package br.com.teamdevs.agilekanban.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -17,7 +17,7 @@ public class Project {
     private String description;
     private List<Member> members;
     private List<String> tasks;
-    private String startDate;
-    private String endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private String status;
 }
