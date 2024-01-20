@@ -6,6 +6,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +18,8 @@ import lombok.Data;
 @Document(collection = "allData")
 public class User {
     @Id
-    private Long id;
+    @JsonIgnore
+    private String id;
 
     @Field(name = "username")
     private String username;
