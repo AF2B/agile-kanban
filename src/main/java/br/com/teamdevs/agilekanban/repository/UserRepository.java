@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.bson.types.ObjectId;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -20,8 +19,11 @@ public class UserRepository {
     private final static String COLLECTION_NAME = "allData";
     private final static String UNWIND_USERS = "users";
 
-    @Autowired
     private MongoTemplate mongoTemplate;
+
+    public UserRepository(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
 
     public void save(User user) {
         mongoTemplate.save(user);
