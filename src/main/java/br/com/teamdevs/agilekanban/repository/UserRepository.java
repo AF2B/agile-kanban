@@ -1,7 +1,10 @@
 package br.com.teamdevs.agilekanban.repository;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.bson.types.ObjectId;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -47,31 +50,17 @@ public class UserRepository {
     public User update(String id, User requestDTO) {
         Query query = new Query(Criteria.where("_id").is(new ObjectId(id)));
         Update update = new Update();
-
-        if (requestDTO.getUsername() != null && !requestDTO.getUsername().isBlank()) {
-            update.set("username", requestDTO.getUsername());
-        }
-        if (requestDTO.getEmail() != null && !requestDTO.getEmail().isBlank()) {
-            update.set("email", requestDTO.getEmail());
-        }
-        if (requestDTO.getPassword() != null && !requestDTO.getPassword().isBlank()) {
-            update.set("password", requestDTO.getPassword());
-        }
-        if (requestDTO.getRole() != null && !requestDTO.getRole().isBlank()) {
-            update.set("role", requestDTO.getRole().toUpperCase());
-        }
-        if (requestDTO.getProjects() != null && !requestDTO.getProjects().isEmpty()) {
-            update.set("projects", requestDTO.getProjects());
-        }
-        if (requestDTO.getCreatedTasks() != null && !requestDTO.getCreatedTasks().isEmpty()) {
-            update.set("createdTasks", requestDTO.getCreatedTasks());
-        }
-        if (requestDTO.getAssignedTasks() != null && !requestDTO.getAssignedTasks().isEmpty()) {
-            update.set("assignedTasks", requestDTO.getAssignedTasks());
-        }
-
+    
+        updateIfPresent(update, "username", requestDTO.getUsername());
+        updateIfPresent(update, "email", requestDTO.getEmail());
+        updateIfPresent(update, "password", requestDTO.getPassword());
+        updateRoleIfPresent(update, requestDTO.getRole());
+        updateListIfPresent(update, "projects", requestDTO.getProjects());
+        updateListIfPresent(update, "createdTasks", requestDTO.getCreatedTasks());
+        updateListIfPresent(update, "assignedTasks", requestDTO.getAssignedTasks());
+    
         mongoTemplate.findAndModify(query, update, User.class);
-        return mongoTemplate.findById(id, User.class);
+        return mongoTemplate.findById(new ObjectId(id), User.class);
     }
 
     public void delete(String id) {
@@ -79,5 +68,23 @@ public class UserRepository {
         query.addCriteria(Criteria.where("_id").is(id));
     
         mongoTemplate.remove(query, User.class);
+    }
+
+    private void updateIfPresent(Update update, String key, String value) {
+    Optional.ofNullable(value)
+            .filter(s -> !s.isBlank())
+            .ifPresent(s -> update.set(key, s));
+    }
+
+    private void updateRoleIfPresent(Update update, String role) {
+        Optional.ofNullable(role)
+                .filter(s -> !s.isBlank())
+                .ifPresent(s -> update.set("role", s.toUpperCase()));
+    }
+
+    private void updateListIfPresent(Update update, String key, List<?> list) {
+        Optional.ofNullable(list)
+                .filter(l -> !l.isEmpty())
+                .ifPresent(l -> update.set(key, l));
     }
 }
