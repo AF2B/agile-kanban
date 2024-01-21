@@ -2,7 +2,6 @@ package br.com.teamdevs.agilekanban.services;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +11,11 @@ import br.com.teamdevs.agilekanban.repository.UserRepository;
 
 @Service
 public class UserService {
-    @Autowired
     private UserRepository repository;
+    
+    public UserService(UserRepository repository) {
+        this.repository = repository;
+    }
 
     public void save(User user) {
         repository.save(user);
