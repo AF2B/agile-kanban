@@ -37,7 +37,7 @@ public class UserService {
         User data = repository.findById(id);
 
         if (data == null) {
-            throw new CustomException(HttpStatus.BAD_REQUEST.value(), "User not found.");
+            throw new CustomException(HttpStatus.NOT_FOUND.value(), "User not found.");
         }
 
         return data;
