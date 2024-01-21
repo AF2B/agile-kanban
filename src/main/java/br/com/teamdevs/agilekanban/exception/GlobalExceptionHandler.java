@@ -11,10 +11,8 @@ import jakarta.validation.ConstraintViolationException;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<String> handleCustomException(CustomException e) {
-        CustomException response = new CustomException(e.getStatus(), e.getMessage());
-        return ResponseEntity.status(e.getStatus()).body(response.getMessage());
+    public ResponseEntity<Object> handleCustomException(CustomException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.valueOf(ex.getStatus()));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
