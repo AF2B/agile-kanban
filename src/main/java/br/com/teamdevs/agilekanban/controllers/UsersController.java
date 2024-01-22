@@ -1,5 +1,7 @@
 package br.com.teamdevs.agilekanban.controllers;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.teamdevs.agilekanban.dto.UserResponseDTO;
@@ -123,5 +126,25 @@ public class UsersController {
     public ResponseEntity<Void> remove(@PathVariable String id) {
         userService.remove(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @Operation(
+        summary = "",
+        description = ""
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "", description = ""),
+        @ApiResponse(responseCode = "", description = "")
+    })
+    @GetMapping("/users/search")
+    public ResponseEntity<UserResponseDTO> customSearch(
+        @RequestParam(required = false) String username, 
+        @RequestParam(required = false) String email
+        ) {
+            List<User> data = userService.search(username, email);
+
+            UserResponseDTO response = new UserResponseDTO(data);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

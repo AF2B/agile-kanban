@@ -3,6 +3,7 @@ package br.com.teamdevs.agilekanban.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -19,7 +20,7 @@ public class UserRepository {
     private final static String COLLECTION_NAME = "allData";
     private final static String UNWIND_USERS = "users";
 
-    private MongoTemplate mongoTemplate;
+    private final MongoTemplate mongoTemplate;
 
     public UserRepository(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
@@ -63,6 +64,28 @@ public class UserRepository {
     
         mongoTemplate.findAndModify(query, update, User.class);
         return mongoTemplate.findById(new ObjectId(id), User.class);
+    } // PADRÃO
+
+    public List<User> search(String username, String email) {
+        Criteria criteria = new Criteria();
+        
+        boolean isUsernameEmpty = StringUtils.isEmpty(username);
+        boolean isEmailEmpty = StringUtils.isEmpty(email);
+        
+        if (isUsernameEmpty && isEmailEmpty) {
+            return null;
+        }
+        
+        if (!isUsernameEmpty) {
+            criteria = criteria.and("username").regex("^" + username, "i");
+        }
+        if (!isEmailEmpty) {
+            criteria = criteria.and("email").is(email);
+        }
+        
+        Query query = new Query(criteria);
+        
+        return mongoTemplate.find(query, User.class);
     }
 
     public void delete(String id) {
