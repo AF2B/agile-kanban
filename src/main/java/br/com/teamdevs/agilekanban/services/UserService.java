@@ -48,4 +48,14 @@ public class UserService {
     public void remove(String id) {
         repository.delete(id);
     }
+
+    public List<User> search(String username, String email) {
+        List<User> data = repository.search(username, email);
+
+        if (data == null) {
+            throw new CustomException(HttpStatus.NOT_FOUND.value(), "User not found.");
+        }
+
+        return data;
+    }
 }
