@@ -30,24 +30,25 @@ public class UserRepository {
         mongoTemplate.save(user);
     } 
 
-    public List<User> findAll() {
+    public Optional<List<User>> findAll() {
         Aggregation aggregation = Aggregation.newAggregation(
             Aggregation.project()
                 .andExclude("_id")
                 .andInclude("username", "password", "email", "role", "projects", "createdTasks", "assignedTasks")
         );
         
-        List<User> users = mongoTemplate.aggregate(aggregation, "allData", User.class).getMappedResults();
-        return users;
+        List<User> users = mongoTemplate.aggregate(aggregation, COLLECTION_NAME, User.class).getMappedResults();
+        return Optional.ofNullable(users);
     }
 
-    public User findById(String id) {
+    public Optional<User> findById(String id) {
         if (!ObjectId.isValid(id)) {
             throw new IllegalArgumentException("Invalid ObjectId format");
         }
     
         ObjectId objectId = new ObjectId(id);
-        return mongoTemplate.findOne(Query.query(Criteria.where("_id").is(objectId)), User.class);
+        User user = mongoTemplate.findOne(Query.query(Criteria.where("_id").is(objectId)), User.class);
+        return Optional.ofNullable(user);
     }
 
     public User update(String id, User requestDTO) {
@@ -66,14 +67,13 @@ public class UserRepository {
         return mongoTemplate.findById(new ObjectId(id), User.class);
     } // PADRÃO
 
-    public List<User> search(String username, String email) {
+    public Optional<List<User>> search(String username, String email) {
         Criteria criteria = new Criteria();
-        
         boolean isUsernameEmpty = StringUtils.isEmpty(username);
         boolean isEmailEmpty = StringUtils.isEmpty(email);
         
         if (isUsernameEmpty && isEmailEmpty) {
-            return null;
+            return Optional.empty();
         }
         
         if (!isUsernameEmpty) {
@@ -84,9 +84,10 @@ public class UserRepository {
         }
         
         Query query = new Query(criteria);
-        
-        return mongoTemplate.find(query, User.class);
+        List<User> result = mongoTemplate.find(query, User.class);
+        return Optional.ofNullable(result);
     }
+    
 
     public void delete(String id) {
         Query query = new Query();
