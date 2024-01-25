@@ -1,13 +1,16 @@
 package br.com.teamdevs.agilekanban.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -68,26 +71,37 @@ public class UserRepository {
     } // PADRÃO
 
     public Optional<List<User>> search(String username, String email) {
-        Criteria criteria = new Criteria();
-        boolean isUsernameEmpty = StringUtils.isEmpty(username);
-        boolean isEmailEmpty = StringUtils.isEmpty(email);
+        List<AggregationOperation> operations = new ArrayList<>();
         
-        if (isUsernameEmpty && isEmailEmpty) {
-            return Optional.empty();
-        }
+        Optional<Criteria> initialCriteria = buildInitialCriteria(username, email);
+        initialCriteria.ifPresent(criteria -> operations.add(Aggregation.match(criteria)));
+
+        // vai precisar usar unwind futuramente por conta da quantidade de dados.
+        // formato atual deve ser PADRÃO para todos, aumento de performance significativo.
+        // operations.add(Aggregation.unwind("arrayField"));
+
+        Aggregation aggregation = Aggregation.newAggregation(operations);
         
-        if (!isUsernameEmpty) {
-            criteria = criteria.and("username").regex("^" + username, "i");
-        }
-        if (!isEmailEmpty) {
-            criteria = criteria.and("email").is(email);
-        }
+        List<User> result = mongoTemplate.aggregate(aggregation, User.class, User.class).getMappedResults();
         
-        Query query = new Query(criteria);
-        List<User> result = mongoTemplate.find(query, User.class);
         return Optional.ofNullable(result);
     }
     
+    private Optional<Criteria> buildInitialCriteria(String username, String email) {
+        Criteria criteria = new Criteria();
+        boolean addCriteria = false;
+
+        if (!StringUtils.isEmpty(username)) {
+            criteria = criteria.and("username").regex("^" + Pattern.quote(username), "i");
+            addCriteria = true;
+        }
+        if (!StringUtils.isEmpty(email)) {
+            criteria = criteria.and("email").is(email);
+            addCriteria = true;
+        }
+
+        return addCriteria ? Optional.of(criteria) : Optional.empty();
+    }
 
     public void delete(String id) {
         Query query = new Query();
