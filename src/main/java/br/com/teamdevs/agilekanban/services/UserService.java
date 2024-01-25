@@ -1,6 +1,7 @@
 package br.com.teamdevs.agilekanban.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,40 +23,32 @@ public class UserService {
     }
 
     public List<User> findAll() {
-        var data = repository.findAll();
-        
-        if (data == null || data.isEmpty()) {
-            throw new CustomException(HttpStatus.NOT_FOUND.value(), "Users not found.");
-        }
-
-        return data;
+        return repository.findAll()
+                         .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND.value(), "No users found."));
     }
 
     public User update(String id, User request) {
+        validateUserExistence(id);
         return repository.update(id, request);
     }
 
     public User find(String id) {
-        User data = repository.findById(id);
-
-        if (data == null) {
-            throw new CustomException(HttpStatus.NOT_FOUND.value(), "User not found.");
-        }
-
-        return data;
+        Optional<User> data = repository.findById(id);
+        return data.orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND.value(), "User not found."));
     }
 
     public void remove(String id) {
+        validateUserExistence(id);
         repository.delete(id);
     }
 
     public List<User> search(String username, String email) {
-        List<User> data = repository.search(username, email);
+        return repository.search(username, email)
+                         .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND.value() ,"No users found matching criteria."));
+    }
 
-        if (data == null) {
-            throw new CustomException(HttpStatus.NOT_FOUND.value(), "User not found.");
-        }
-
-        return data;
+    private User validateUserExistence(String id) {
+        return repository.findById(id)
+                         .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND.value(), "User not found."));
     }
 }
