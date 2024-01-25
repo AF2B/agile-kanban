@@ -34,11 +34,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Usuários", description = "Endpoints para gerenciar usuários")
 public class UsersController {
     private UserService userService;
-    private UserValidationPropertiesService userValidationPropertiesService;
 
     public UsersController(UserService serviceInj, UserValidationPropertiesService userValidationPropertiesServiceInj) {
         this.userService = serviceInj;
-        this.userValidationPropertiesService = userValidationPropertiesServiceInj;
     }
 
     @Operation(
@@ -77,8 +75,8 @@ public class UsersController {
     })
     @GetMapping("/users/{id}")
     public ResponseEntity<User> findById(@PathVariable String id) {
-        User data = userService.find(id);
-        return ResponseEntity.ok(data);
+        User user = userService.find(id);
+        return ResponseEntity.ok(user);
     }
 
    @Operation(
@@ -91,11 +89,10 @@ public class UsersController {
    })
    @PostMapping("/users")
     public ResponseEntity<HttpStatus> CreateUser(@RequestBody User user) {
-        // if (user.getUsername() == null && user.getUsername().isEmpty()) {
-        //     throw new CustomException(HttpStatus.BAD_REQUEST.value(), "blabla...");
-        // }
-        // validations above should be in a service.
-        
+        UserValidationPropertiesService.callValidateUserProperties(
+            user.getEmail(), 
+            user.getPassword(), 
+            user.getUsername());
         userService.save(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -112,7 +109,7 @@ public class UsersController {
     public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User requestDTO) {
         User updatedUser = userService.update(id, requestDTO);
         return ResponseEntity.ok(updatedUser);
-    }
+    } // TODO: Precisa ver como vai funcionar esse update mais a fundo.
 
     @Operation(
         summary = "Remover um usuário",
@@ -129,22 +126,26 @@ public class UsersController {
     }
 
     @Operation(
-        summary = "",
-        description = ""
+        summary = "Busca personalizada",
+        description = "Endpoint para consultar um usuário por username ou email."
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "", description = ""),
-        @ApiResponse(responseCode = "", description = "")
+        @ApiResponse(responseCode = "200", description = ""),
+        @ApiResponse(responseCode = "404", description = "")
     })
     @GetMapping("/users/search")
     public ResponseEntity<UserResponseDTO> customSearch(
         @RequestParam(required = false) String username, 
         @RequestParam(required = false) String email
         ) {
-            List<User> data = userService.search(username, email);
-
-            UserResponseDTO response = new UserResponseDTO(data);
-
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
+            if (username != null && !username.isBlank()) {
+                UserValidationPropertiesService.callValidateUsername(username);
+            }
+            if (email != null && !email.isBlank()) {
+                UserValidationPropertiesService.callValidateEmail(email);
+            }
+            List<User> users = userService.search(username, email);
+            UserResponseDTO responseDTO = new UserResponseDTO(users);
+            return ResponseEntity.ok(responseDTO);
+        }
 }
