@@ -23,7 +23,7 @@ import br.com.teamdevs.agilekanban.controllers.UsersController;
 import br.com.teamdevs.agilekanban.dto.UserResponseDTO;
 import br.com.teamdevs.agilekanban.model.User;
 import br.com.teamdevs.agilekanban.services.UserService;
-import br.com.teamdevs.agilekanban.services.ValidationsController.UserValidations.UserValidationPropertiesService;
+import br.com.teamdevs.agilekanban.services.validations.uservalidations.UserValidationPropertiesService;
 
 @SpringBootTest
 public class UsersControllerTest {
