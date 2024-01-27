@@ -70,21 +70,9 @@ public final class UserValidationPropertiesService {
         }
     }
 
-    public static void callValidateUserProperties(String email, String password, String username) {
+    public static void validate(String email, String password, String username) {
         validateEmail(email);
         validatePassword(password);
         validateUsername(username);
-    }
-
-    public static void callValidateUsername(String username) {
-        validateUsername(username);
-    }
-
-    public static void callValidatePassword(String password) {
-        validatePassword(password);
-    }
-
-    public static void callValidateEmail(String email) {
-        validateEmail(email);
     }
 }
