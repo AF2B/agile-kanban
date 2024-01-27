@@ -1,4 +1,4 @@
-package br.com.teamdevs.agilekanban.services.ValidationsController.ProjectValidations;
+package br.com.teamdevs.agilekanban.services.validations.projectvalidations;
 
 import java.util.function.Predicate;
 
@@ -8,7 +8,11 @@ import org.springframework.stereotype.Service;
 import br.com.teamdevs.agilekanban.exception.CustomException;
 
 @Service
-public class ProjectValidationPropertiesService {
+public final class ProjectValidationPropertiesService {
+    private ProjectValidationPropertiesService() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
     protected static void validateName(String name) {
         Predicate<String> startsWithLetter = s -> Character.isLetter(s.charAt(0));
         Predicate<String> containsOnlyValidCharacters = s -> s.matches("[\\p{L} ._]+");

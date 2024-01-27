@@ -1,4 +1,4 @@
-package br.com.teamdevs.agilekanban.services.ValidationsController.UserValidations;
+package br.com.teamdevs.agilekanban.services.validations.uservalidations;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -11,6 +11,10 @@ import java.util.regex.Pattern;
 
 @Service
 public final class UserValidationPropertiesService {
+    private UserValidationPropertiesService() {
+        throw new IllegalStateException("Utility class");
+    }
+
     private static final List<String> commonPasswords = Arrays.asList(
         "password", "123456", "12345678", "123456789", "qwerty",
         "abc123", "password1", "admin", "12345", "1234", "000000",

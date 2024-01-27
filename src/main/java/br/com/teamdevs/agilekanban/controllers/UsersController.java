@@ -20,9 +20,8 @@ import br.com.teamdevs.agilekanban.exception.InvalidObjectIdException;
 import br.com.teamdevs.agilekanban.model.Project;
 import br.com.teamdevs.agilekanban.model.User;
 import br.com.teamdevs.agilekanban.services.UserService;
-import br.com.teamdevs.agilekanban.services.ValidationsController.ProjectValidations.ProjectValidationPropertiesService;
-import br.com.teamdevs.agilekanban.services.ValidationsController.UserValidations.UserValidationPropertiesService;
-
+import br.com.teamdevs.agilekanban.services.validations.projectvalidations.ProjectValidationPropertiesService;
+import br.com.teamdevs.agilekanban.services.validations.uservalidations.UserValidationPropertiesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;

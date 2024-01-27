@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 public final class UpdateUtils {
+    private UpdateUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static void updateIfPresent(@NonNull Update update, @NonNull String key, Object value) {
         Optional.ofNullable(value)
                 .ifPresent(v -> update.set(key, v));
