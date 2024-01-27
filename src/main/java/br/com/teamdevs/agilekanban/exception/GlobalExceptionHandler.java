@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
 import jakarta.validation.ConstraintViolationException;
 
 @RestControllerAdvice
@@ -23,7 +24,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<UserNotFoundException> handleConstraintViolation(UserNotFoundException e) {
-        throw new UserNotFoundException(HttpStatus.NOT_FOUND.value(), "test...");
+    public ResponseEntity<Object> handleConstraintViolation(UserNotFoundException e) {
+        throw new UserNotFoundException("Usuário não encontrado.");
+    }
+
+    @ExceptionHandler(InvalidObjectIdException.class)
+    public ResponseEntity<Object> handleInvalidIdException(InvalidObjectIdException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
