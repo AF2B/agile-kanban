@@ -17,11 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.teamdevs.agilekanban.dto.UserResponseDTO;
 import br.com.teamdevs.agilekanban.exception.InvalidObjectIdException;
-import br.com.teamdevs.agilekanban.model.Project;
 import br.com.teamdevs.agilekanban.model.User;
 import br.com.teamdevs.agilekanban.services.UserService;
-import br.com.teamdevs.agilekanban.services.validations.projectvalidations.ProjectValidationPropertiesService;
-import br.com.teamdevs.agilekanban.services.validations.uservalidations.UserValidationPropertiesService;
+import br.com.teamdevs.agilekanban.services.validations.ValidationFacadeService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,10 +34,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Validated
 @Tag(name = "Usuários", description = "Endpoints para gerenciar usuários")
 public class UsersController {
-    private UserService userService;
+    private final UserService userService;
+    private final ValidationFacadeService validationFacadeService;
 
-    public UsersController(UserService serviceInj) {
+    public UsersController(UserService serviceInj, ValidationFacadeService validationFacadeService) {
         this.userService = serviceInj;
+        this.validationFacadeService = validationFacadeService;
     }
 
     @Operation(
@@ -61,19 +62,10 @@ public class UsersController {
    })
     @PostMapping("/users")
     public ResponseEntity<String> create(@RequestBody User user) {
-        UserValidationPropertiesService.callValidateUserProperties(
-            user.getEmail(),
-            user.getPassword(),
-            user.getUsername()
-        );
-
-        if (user.getProjects() != null) {
-            for (Project project : user.getProjects()) {
-                ProjectValidationPropertiesService.callValidateName(project.getName());
-            }
-        }
-
         try {
+            validationFacadeService.validateUser(user);
+            // adicionar outras validacoes.
+
             userService.save(user);
             return new ResponseEntity<>("Usuário criado com sucesso!", HttpStatus.CREATED);
         } catch (Exception e) {
@@ -124,8 +116,8 @@ public class UsersController {
         @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     })
     @PutMapping("/users/{id}")
-    public ResponseEntity<User> update(@PathVariable String id, @RequestBody User requestDTO) {
-        User updatedUser = userService.update(id, requestDTO);
+    public ResponseEntity<User> update(@PathVariable String id, @RequestBody User request) {
+        User updatedUser = userService.update(id, request);
         return ResponseEntity.ok(updatedUser);
     }
 
@@ -156,12 +148,12 @@ public class UsersController {
         @RequestParam(required = false) String username, 
         @RequestParam(required = false) String email
         ) {
-            if (username != null && !username.isBlank()) {
-                UserValidationPropertiesService.callValidateUsername(username);
-            }
-            if (email != null && !email.isBlank()) {
-                UserValidationPropertiesService.callValidateEmail(email);
-            }
+            User user = new User();
+            user.setUsername(username);
+            user.setEmail(email);
+
+            validationFacadeService.validateUser(user);
+
             List<User> users = userService.search(username, email);
             UserResponseDTO responseDTO = new UserResponseDTO(users);
             return ResponseEntity.ok(responseDTO);

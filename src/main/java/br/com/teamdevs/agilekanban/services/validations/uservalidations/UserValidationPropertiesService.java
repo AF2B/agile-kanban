@@ -4,10 +4,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import br.com.teamdevs.agilekanban.exception.CustomException;
+import br.com.teamdevs.agilekanban.model.User;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.function.Predicate;
 
 @Service
 public final class UserValidationPropertiesService {
@@ -70,9 +72,17 @@ public final class UserValidationPropertiesService {
         }
     }
 
-    public static void validate(String email, String password, String username) {
-        validateEmail(email);
-        validatePassword(password);
-        validateUsername(username);
+    public static void validate(User user) {
+        Predicate<String> isNotNullOrBlank = s -> s != null && !s.isBlank();
+
+        if (isNotNullOrBlank.test(user.getUsername())) {
+            UserValidationPropertiesService.validateUsername(user.getUsername());
+        }
+        if (isNotNullOrBlank.test(user.getEmail())) {
+            UserValidationPropertiesService.validateEmail(user.getEmail());
+        }
+        if (isNotNullOrBlank.test(user.getPassword())) {
+            UserValidationPropertiesService.validatePassword(user.getPassword());
+        }
     }
 }
