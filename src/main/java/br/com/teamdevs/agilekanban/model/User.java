@@ -8,12 +8,15 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import br.com.teamdevs.agilekanban.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Document(collection = "allData")
 public class User {
@@ -31,9 +34,9 @@ public class User {
     private String email;
 
     @Field(name = "role")
-    private String role;
+    private Role role;
 
-    @Field(name = "tasks")
+    @Field(name = "projects")
     private List<Project> projects;
 
     @Field(name = "createdTasks")
