@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.teamdevs.agilekanban.dto.UserResponseDTO;
+import br.com.teamdevs.agilekanban.exception.InvalidObjectIdException;
+import br.com.teamdevs.agilekanban.model.Project;
 import br.com.teamdevs.agilekanban.model.User;
 import br.com.teamdevs.agilekanban.services.UserService;
+import br.com.teamdevs.agilekanban.services.ValidationsController.ProjectValidations.ProjectValidationPropertiesService;
 import br.com.teamdevs.agilekanban.services.ValidationsController.UserValidations.UserValidationPropertiesService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,7 +38,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class UsersController {
     private UserService userService;
 
-    public UsersController(UserService serviceInj, UserValidationPropertiesService userValidationPropertiesServiceInj) {
+    public UsersController(UserService serviceInj) {
         this.userService = serviceInj;
     }
 
@@ -46,6 +49,37 @@ public class UsersController {
     @GetMapping("/health-check")
     public ResponseEntity<HttpStatus> healthCheck() {
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Operation(
+       summary = "Criar um novo usuário",
+       description = "Endpoint para criar um novo usuário."
+   )
+   @ApiResponses(value = {
+       @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso!"),
+       @ApiResponse(responseCode = "400", description = "Requisição inválida"),
+       @ApiResponse(responseCode = "500", description = "Erro ao criar o usuário")
+   })
+    @PostMapping("/users")
+    public ResponseEntity<String> create(@RequestBody User user) {
+        UserValidationPropertiesService.callValidateUserProperties(
+            user.getEmail(),
+            user.getPassword(),
+            user.getUsername()
+        );
+
+        if (user.getProjects() != null) {
+            for (Project project : user.getProjects()) {
+                ProjectValidationPropertiesService.callValidateName(project.getName());
+            }
+        }
+
+        try {
+            userService.save(user);
+            return new ResponseEntity<>("Usuário criado com sucesso!", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Erro ao criar o usuário: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Operation(
@@ -71,6 +105,8 @@ public class UsersController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Usuário encontrado"),
+        @ApiResponse(responseCode = "400", description = "Formato de ID inválido fornecido",
+            content = @Content(schema = @Schema(implementation = InvalidObjectIdException.class))),
         @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     })
     @GetMapping("/users/{id}")
@@ -79,37 +115,20 @@ public class UsersController {
         return ResponseEntity.ok(user);
     }
 
-   @Operation(
-       summary = "Criar um novo usuário",
-       description = "Endpoint para criar um novo usuário."
-   )
-   @ApiResponses(value = {
-       @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso"),
-       @ApiResponse(responseCode = "400", description = "Requisição inválida")
-   })
-   @PostMapping("/users")
-    public ResponseEntity<HttpStatus> CreateUser(@RequestBody User user) {
-        UserValidationPropertiesService.callValidateUserProperties(
-            user.getEmail(), 
-            user.getPassword(), 
-            user.getUsername());
-        userService.save(user);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
     @Operation(
         summary = "Atualizar um usuário",
         description = "Endpoint para atualizar um usuário existente."
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso"),
+        @ApiResponse(responseCode = "400", description = "Formato de ID inválido fornecido"),
         @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     })
     @PutMapping("/users/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User requestDTO) {
+    public ResponseEntity<User> update(@PathVariable String id, @RequestBody User requestDTO) {
         User updatedUser = userService.update(id, requestDTO);
         return ResponseEntity.ok(updatedUser);
-    } // TODO: Precisa ver como vai funcionar esse update mais a fundo.
+    }
 
     @Operation(
         summary = "Remover um usuário",
