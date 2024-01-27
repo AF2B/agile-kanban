@@ -1,5 +1,7 @@
 package br.com.teamdevs.agilekanban.model;
 
+import java.time.LocalDate;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,5 +15,5 @@ public class Attachment {
     private String taskId;
     private String userId;
     private String filename;
-    private String timestamp;
+    private LocalDate timestamp;
 }

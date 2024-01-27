@@ -1,6 +1,7 @@
 package br.com.teamdevs.agilekanban.model;
 
 import java.util.List;
+import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,10 +19,10 @@ public class Task {
     private String assignedTo;
     private String createdBy;
     private String priority;
-    private String dueDate;
+    private LocalDate dueDate;
     private boolean completed;
-    private List<String> comments;
-    private List<String> attachments;
+    private List<Comment> comments;
+    private List<Attachment> attachments;
     private List<String> subtasks;
     private List<String> dependencies;
     private List<String> tags;
