@@ -14,7 +14,7 @@ public final class AttachmentValidationPropertiesService {
     private static final Predicate<String> isValidFilenamePredicate = 
         filename -> filename != null && filename.matches(VALID_FILENAME_REGEX);
 
-    public boolean isValidFilename(String filename) {
-        return isValidFilenamePredicate.test(filename);
+    public static void validate(String filename) {
+        isValidFilenamePredicate.test(filename);
     }
 }

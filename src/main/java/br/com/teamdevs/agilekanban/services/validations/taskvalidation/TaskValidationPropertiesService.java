@@ -13,7 +13,7 @@ public final class TaskValidationPropertiesService {
     private static final Predicate<String> isValidTitlePredicate = 
         title -> title != null && !title.trim().isEmpty() && title.matches("^[A-Za-z][A-Za-z0-9 _*!?.]*$");
 
-    public boolean isValidTitle(String title) {
-        return isValidTitlePredicate.test(title);
+    public static void validate(String title) {
+        isValidTitlePredicate.test(title);
     }
 }

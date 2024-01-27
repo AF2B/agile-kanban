@@ -25,7 +25,7 @@ public final class ProjectValidationPropertiesService {
         }
     }
 
-    public static void callValidateName(String name) {
+    public static void validate(String name) {
         validateName(name);
     }
 }

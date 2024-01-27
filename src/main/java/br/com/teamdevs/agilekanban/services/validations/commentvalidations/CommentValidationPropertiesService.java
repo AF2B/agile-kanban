@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 
 public final class CommentValidationPropertiesService {
     private CommentValidationPropertiesService() {
-        throw new IllegalStateException("Utility class");
+        throw new IllegalStateException("This is a utility class and cannot be instantiated");
     }
 
     private static final String VALID_TEXT_REGEX = "^[\\w\\s.,;:?!'\"-]*$";
@@ -13,7 +13,7 @@ public final class CommentValidationPropertiesService {
     private static final Predicate<String> isValidTextPredicate = 
         text -> text != null && text.matches(VALID_TEXT_REGEX) && OFFENSIVE_WORDS.stream().noneMatch(text::contains);
 
-    public static boolean isValidText(String text) {
-        return isValidTextPredicate.test(text);
+    public static void validate(String text) {
+        isValidTextPredicate.test(text);
     }
 }
