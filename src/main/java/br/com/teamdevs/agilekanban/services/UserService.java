@@ -19,12 +19,15 @@ public class UserService {
     }
 
     public void save(User user) {
+        // encrypt password before save in database
+        
+
         repository.save(user);
     }
 
     public List<User> findAll() {
         return repository.findAll()
-                         .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND.value(), "No users found."));
+                         .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND.value(), "Usuário não encontrado"));
     }
 
     public User update(String id, User request) {
@@ -34,7 +37,7 @@ public class UserService {
 
     public User find(String id) {
         Optional<User> data = repository.findById(id);
-        return data.orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND.value(), "User not found."));
+        return data.orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND.value(), "Usuário não encontrado"));
     }
 
     public void remove(String id) {
@@ -44,11 +47,11 @@ public class UserService {
 
     public List<User> search(String username, String email) {
         return repository.search(username, email)
-                         .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND.value() ,"No users found matching criteria."));
+                         .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND.value() ,"Usuário não encontrado"));
     }
 
     private User validateUserExistence(String id) {
         return repository.findById(id)
-                         .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND.value(), "User not found."));
+                         .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND.value(), "Usuário não encontrado"));
     }
 }
