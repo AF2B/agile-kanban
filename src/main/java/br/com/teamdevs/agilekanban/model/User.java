@@ -33,12 +33,12 @@ public class User {
     @Field(name = "role")
     private String role;
 
-    @Field(name = "projects")
-    private List<String> projects;
+    @Field(name = "tasks")
+    private List<Project> projects;
 
     @Field(name = "createdTasks")
-    private List<String> createdTasks;
+    private List<Task> createdTasks;
 
     @Field(name = "assignedTasks")
-    private List<String> assignedTasks;
+    private List<Task> assignedTasks;
 }
