@@ -1,10 +1,10 @@
 # Agile Kanban
 
-[![Build Status](https://travis-ci.org/seu-usuario/agile-kanban.svg?branch=main)](https://travis-ci.org/seu-usuario/agile-kanban)
+[![Build Status](https://travis-ci.org/af2b/agile-kanban.svg?branch=main)](https://travis-ci.org/af2b/agile-kanban)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![GitHub Issues](https://img.shields.io/github/issues/seu-usuario/agile-kanban.svg)](https://github.com/seu-usuario/agile-kanban/issues)
-[![GitHub Forks](https://img.shields.io/github/forks/seu-usuario/agile-kanban.svg)](https://github.com/seu-usuario/agile-kanban/network)
-[![GitHub Stars](https://img.shields.io/github/stars/seu-usuario/agile-kanban.svg)](https://github.com/seu-usuario/agile-kanban/stargazers)
+[![GitHub Issues](https://img.shields.io/github/issues/af2b/agile-kanban.svg)](https://github.com/af2b/agile-kanban/issues)
+[![GitHub Forks](https://img.shields.io/github/forks/af2b/agile-kanban.svg)](https://github.com/af2b/agile-kanban/network)
+[![GitHub Stars](https://img.shields.io/github/stars/af2b/agile-kanban.svg)](https://github.com/af2b/agile-kanban/stargazers)
 
 Um sistema moderno e eficiente de Kanban para gerenciar suas tarefas de forma ágil.
 
@@ -32,7 +32,7 @@ O Agile Kanban é uma aplicação de gerenciamento de tarefas projetada para pro
 1. Clone o repositório:
 
     ```bash
-    git clone https://github.com/seu-usuario/agile-kanban.git
+    git clone https://github.com/af2b/agile-kanban.git
     cd agile-kanban
     ```
 
@@ -45,7 +45,7 @@ O Agile Kanban é uma aplicação de gerenciamento de tarefas projetada para pro
 3. Execute o aplicativo:
 
     ```bash
-    ./mvnw spring-boot:run
+    ./gradlew bootRun
     ```
 
 4. Acesse a aplicação em http://localhost:8080/swagger-ui/index.html
